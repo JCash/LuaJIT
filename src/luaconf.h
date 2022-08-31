@@ -129,8 +129,8 @@
   #define LUA_USERDATA_ALIGNMENT 16
 #endif
 
-#if !(LUA_USERDATA_ALIGNMENT == 8 || LUA_USERDATA_ALIGNMENT == 16)
-#error "Invalid LUA_USERDATA_ALIGNMENT (valid values are 8 or 16)"
+#if LUA_USERDATA_ALIGNMENT != 16
+#error "Invalid LUA_USERDATA_ALIGNMENT (only valid value is 16)"
 #endif
 
 /* Linkage of public API functions. */
