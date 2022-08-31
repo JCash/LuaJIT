@@ -123,16 +123,6 @@
 #define LUA_INTFRMLEN		"l"
 #define LUA_INTFRM_T		long
 
-/* Allows for aligning the userdata struct. Valid values are 8 or 16. Default is 8.
-*/
-#if !defined(LUA_USERDATA_ALIGNMENT)
-  #define LUA_USERDATA_ALIGNMENT 16
-#endif
-
-#if LUA_USERDATA_ALIGNMENT != 16
-#error "Invalid LUA_USERDATA_ALIGNMENT (only valid value is 16)"
-#endif
-
 /* Linkage of public API functions. */
 #if defined(LUA_BUILD_AS_DLL)
 #if defined(LUA_CORE) || defined(LUA_LIB)

@@ -320,7 +320,7 @@ typedef struct GCstr {
 /* -- Userdata object ----------------------------------------------------- */
 
 /* Userdata object. Payload follows. */
-typedef struct LJ_ALIGN(LUA_USERDATA_ALIGNMENT) GCudata {
+typedef struct LJ_ALIGN(16) GCudata {
   GCHeader;
   uint8_t udtype;	/* Userdata type. */
   uint8_t unused2;
@@ -329,17 +329,13 @@ typedef struct LJ_ALIGN(LUA_USERDATA_ALIGNMENT) GCudata {
   GCRef metatable;	/* Must be at same offset in GCtab. */
 
   uint32_t align0;      /* To force 8 byte alignment of the payload. */
-#if LUA_USERDATA_ALIGNMENT == 16
-    #ifndef LJ_GC64
-        uint64_t align1;/* To force 16 byte alignment of the payload. */
-    #endif
-#endif
+  #ifndef LJ_GC64
+      uint64_t align1;/* To force 16 byte alignment of the payload. */
+  #endif
 
 } GCudata;
 
-#undef LUA_STRUCT_ALIGNED
-
-LJ_STATIC_ASSERT((sizeof(GCudata) % LUA_USERDATA_ALIGNMENT) == 0);
+LJ_STATIC_ASSERT((sizeof(GCudata) % 16) == 0);
 
 /* Userdata types. */
 enum {
