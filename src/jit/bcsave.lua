@@ -29,7 +29,6 @@ Save LuaJIT bytecode: luajit -b[options] input output
   -l        Only list bytecode.
   -s        Strip debug info (default).
   -g        Keep debug info.
-  -f        Set custom file name (passed to loadstring. default: input filename)
   -n name   Set module name (default: auto-detect from input name).
   -t type   Set output file type (default: auto-detect from output name).
   -a arch   Override architecture for object files (default: native).
@@ -86,18 +85,18 @@ local map_type = {
 }
 
 local map_arch = {
-  x86 =		{ e = "le", b = 32, m = 3, p = 0x14c, },
-  x64 =		{ e = "le", b = 64, m = 62, p = 0x8664, },
-  arm =		{ e = "le", b = 32, m = 40, p = 0x1c0, },
-  arm64 =	{ e = "le", b = 64, m = 183, p = 0xaa64, },
-  arm64be =	{ e = "be", b = 64, m = 183, },
-  ppc =		{ e = "be", b = 32, m = 20, },
-  mips =	{ e = "be", b = 32, m = 8, f = 0x50001006, },
-  mipsel =	{ e = "le", b = 32, m = 8, f = 0x50001006, },
-  mips64 =	{ e = "be", b = 64, m = 8, f = 0x80000007, },
-  mips64el =	{ e = "le", b = 64, m = 8, f = 0x80000007, },
-  mips64r6 =	{ e = "be", b = 64, m = 8, f = 0xa0000407, },
-  mips64r6el =	{ e = "le", b = 64, m = 8, f = 0xa0000407, },
+  x86 =   { e = "le", b = 32, m = 3, p = 0x14c, },
+  x64 =   { e = "le", b = 64, m = 62, p = 0x8664, },
+  arm =   { e = "le", b = 32, m = 40, p = 0x1c0, },
+  arm64 = { e = "le", b = 64, m = 183, p = 0xaa64, },
+  arm64be = { e = "be", b = 64, m = 183, },
+  ppc =   { e = "be", b = 32, m = 20, },
+  mips =  { e = "be", b = 32, m = 8, f = 0x50001006, },
+  mipsel =  { e = "le", b = 32, m = 8, f = 0x50001006, },
+  mips64 =  { e = "be", b = 64, m = 8, f = 0x80000007, },
+  mips64el =  { e = "le", b = 64, m = 8, f = 0x80000007, },
+  mips64r6 =  { e = "be", b = 64, m = 8, f = 0xa0000407, },
+  mips64r6el =  { e = "le", b = 64, m = 8, f = 0xa0000407, },
 }
 
 local map_os = {
@@ -647,7 +646,6 @@ local function docmd(...)
   local arg = {...}
   local n = 1
   local list = false
-  local filename = nil
   local ctx = {
     strip = true, arch = jit.arch, os = jit.os:lower(),
     type = false, modname = false,
@@ -658,32 +656,32 @@ local function docmd(...)
       tremove(arg, n)
       if a == "--" then break end
       for m=2,#a do
-	local opt = a:sub(m, m)
-	if opt == "l" then
-	  list = true
-	elseif opt == "s" then
-	  ctx.strip = true
-	elseif opt == "g" then
-	  ctx.strip = false
-	else
-	  if arg[n] == nil or m ~= #a then usage() end
-	  if opt == "e" then
-	    if n ~= 1 then usage() end
-	    arg[1] = check(loadstring(arg[1]))
-	  elseif opt == "n" then
-	    ctx.modname = checkmodname(tremove(arg, n))
-	  elseif opt == "t" then
-	    ctx.type = checkarg(tremove(arg, n), map_type, "file type")
-	  elseif opt == "a" then
-	    ctx.arch = checkarg(tremove(arg, n), map_arch, "architecture")
-	  elseif opt == "o" then
-	    ctx.os = checkarg(tremove(arg, n), map_os, "OS name")
-	  elseif opt == "F" then
-	    ctx.filename = "@"..tremove(arg, n)
-	  else
-	    usage()
-	  end
-	end
+  local opt = a:sub(m, m)
+  if opt == "l" then
+    list = true
+  elseif opt == "s" then
+    ctx.strip = true
+  elseif opt == "g" then
+    ctx.strip = false
+  else
+    if arg[n] == nil or m ~= #a then usage() end
+    if opt == "e" then
+      if n ~= 1 then usage() end
+      arg[1] = check(loadstring(arg[1]))
+    elseif opt == "n" then
+      ctx.modname = checkmodname(tremove(arg, n))
+    elseif opt == "t" then
+      ctx.type = checkarg(tremove(arg, n), map_type, "file type")
+    elseif opt == "a" then
+      ctx.arch = checkarg(tremove(arg, n), map_arch, "architecture")
+    elseif opt == "o" then
+      ctx.os = checkarg(tremove(arg, n), map_os, "OS name")
+    elseif opt == "F" then
+      ctx.filename = "@"..tremove(arg, n)
+    else
+      usage()
+    end
+  end
       end
     else
       n = n + 1
@@ -694,7 +692,7 @@ local function docmd(...)
     bclist(ctx, arg[1], arg[2] or "-")
   else
     if #arg ~= 2 then usage() end
-    bcsave(ctx, arg[1], arg[2], filename or arg[1])
+    bcsave(ctx, arg[1], arg[2])
   end
 end
 
@@ -704,4 +702,3 @@ end
 return {
   start = docmd -- Process -b command line option.
 }
-
