@@ -212,8 +212,6 @@
 #define LJ_ARCH_NUMMODE		LJ_NUMMODE_SINGLE_DUAL
 #ifndef LUAJIT_DISABLE_GC64
 #define LJ_TARGET_GC64		1
-#elif LJ_TARGET_OSX
-#error "macOS requires GC64 -- don't disable it"
 #endif
 
 #elif LUAJIT_TARGET == LUAJIT_ARCH_ARM
